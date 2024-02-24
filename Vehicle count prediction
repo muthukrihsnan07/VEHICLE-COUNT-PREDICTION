@@ -1,0 +1,71 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+data = pd.read_csv('/content/traffic.csv')
+
+# Convert 'DateTime' column to datetime format
+data['DateTime'] = pd.to_datetime(data['DateTime'])
+
+# Sorted value data by 'DateTime' for plotting
+data = data.sort_values('DateTime')
+
+# Reshape the 'Junction' column for model fit
+X = data['Junction'].values.reshape(-1, 1)
+y = data['Vehicles']
+
+# Fit the Linear Regression Model
+model = LinearRegression()
+model.fit(X, y)
+
+# Predict the Vehicle counts using the fit model
+predicted_values = model.predict(X)
+
+# Plot the Bar Graph
+plt.figure(figsize=(10, 6))
+plt.scatter(data['DateTime'], data['Vehicles'])
+plt.plot(data['DateTime'], predicted_values, color='red', label='Regression Line')
+plt.xlabel('Date and Time')
+plt.ylabel('Vehicle Count')
+plt.title('Vehicle Count Over Time with Regression Line')
+plt.xticks(rotation=45)
+plt.show()
+#compare the date time and vehicle for bar graph
+plt.bar(data['DateTime'], data['Vehicles'])
+plt.xlabel('Date and Time')
+plt.ylabel('Vehicle Count')
+plt.title('Vehicle Count Over Time')
+plt.xticks(rotation=45)
+plt.show()
+#compare the vehicles and frequency
+plt.hist(data['Vehicles'], bins=15, color='skyblue')
+plt.xlabel('Vehicle Count')
+plt.ylabel('Frequency')
+plt.title('Vehicle Count Histogram')
+plt.show()
+#compare the junction and vehicle count
+plt.scatter(data['Junction'], data['Vehicles'])
+plt.xlabel('Junction')
+plt.ylabel('Vehicle Count')
+plt.title('Compare between Junction and Vehicle count')
+plt.show()
+#Mean, Median, Mode, Standard Deviation
+print(f"Mean: {data['Vehicles'].mean()}")
+print(f"Median: {data['Vehicles'].median()}")
+print(f"Mode: {data['Vehicles'].mode().values[0]}")
+print(f"Standard Deviation: {data['Vehicles'].std()}")
+# Create a pie chart
+sums = data.groupby('DateTime')['Vehicles'].sum().head()
+plt.figure(figsize=(8, 8))
+plt.pie(sums, labels=sums.index, autopct='%1.1f%%')
+plt.title('Vehicle Count Proportion Over Time')
+plt.show()
+#scatter plot for Actual vs Predicted value
+actual_values = data['Vehicles']
+plt.scatter(actual_values, actual_values, color='blue', label='Actual Values')
+plt.scatter(actual_values, predicted_values, color='red', label='Predicted Values')
+plt.xlabel('Actual Values')
+plt.ylabel('Predicted Values')
+plt.legend()
+plt.title('Actual vs Predicted Values for Linear Regression')
+plt.show()
